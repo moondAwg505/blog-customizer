@@ -66,29 +66,29 @@ export const ArticleParamsForm = ({
 	};
 
 	// Откртие и зайкрытие сайдбара
-	const [isOpen, setIsOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const sidebarRef = useRef<HTMLDivElement>(null);
 
 	const toggleSidebar = () => {
-		setIsOpen((isOpen) => !isOpen);
+		setIsMenuOpen((isMenuOpen) => !isMenuOpen);
 	};
 
 	// Клик вне сайдбара
 	useEffect(() => {
+		if (!isMenuOpen) return;
 		const clickOutside = (event: MouseEvent) => {
 			if (
-				isOpen &&
 				sidebarRef.current &&
 				!sidebarRef.current.contains(event.target as Node)
 			) {
-				setIsOpen(false);
+				setIsMenuOpen(false);
 			}
 		};
 
 		// Закрытие сайдбара по нажатию на клавишу
 		const escapeClose = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') {
-				setIsOpen(false);
+				setIsMenuOpen(false);
 			}
 		};
 		document.addEventListener('mousedown', clickOutside);
@@ -98,13 +98,15 @@ export const ArticleParamsForm = ({
 			document.removeEventListener('mousedown', clickOutside);
 			document.removeEventListener('keydown', escapeClose);
 		};
-	}, [isOpen]);
+	}, [isMenuOpen]);
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={toggleSidebar} />
+			<ArrowButton isOpen={isMenuOpen} onClick={toggleSidebar} />
 			<aside
 				ref={sidebarRef}
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
